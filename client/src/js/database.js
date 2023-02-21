@@ -18,7 +18,7 @@ export const putDb = async (content) => {
   const jateDb = await openDB("jate", 1);
   const tx = jateDb.transaction("jate", "readwrite");
   const store = tx.objectStore("jate");
-  const request = store.add({ jate: content });
+  const request = store.put({ id: 1, jate: content });
   const result = await request;
   console.log("🚀 - data saved to the database", result);
 };
@@ -31,8 +31,13 @@ export const getDb = async () => {
   const store = tx.objectStore("jate");
   const request = store.getAll();
   const result = await request;
-  console.log("result.value", result);
-  return result;
+  if (result.length > 0) {
+    // Returns the text content saved to jate
+    // All data in putDb is saved to ID 1, which will always be the 0 index when returning it with getDb
+    return result[0].jate;
+  } else {
+    return;
+  }
 };
 
 initdb();
